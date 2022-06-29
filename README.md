@@ -7,7 +7,7 @@ differences so far:
 - Single typed resources
 
 [![Documentation](https://docs.rs/hecs/badge.svg)](https://docs.rs/hecs/)
-[![Crates.io](https://img.shields.io/crates/v/hecs.svg)](https://crates.io/crates/hecs)
+[![Crates.io](https://img.shields.io/crates/v/hexz.svg)](https://crates.io/crates/hexz)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE-APACHE)
 
 hecs provides a high-performance, minimalist entity-component-system (ECS)
