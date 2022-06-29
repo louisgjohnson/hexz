@@ -40,23 +40,23 @@ fn gen_dynamic_bundle_impl(
 ) -> TokenStream2 {
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
     quote! {
-        unsafe impl #impl_generics ::hecs::DynamicBundle for #ident #ty_generics #where_clause {
+        unsafe impl #impl_generics ::hexz::DynamicBundle for #ident #ty_generics #where_clause {
             fn key(&self) -> ::core::option::Option<::core::any::TypeId> {
                 ::core::option::Option::Some(::core::any::TypeId::of::<Self>())
             }
 
             fn with_ids<__hecs__T>(&self, f: impl ::std::ops::FnOnce(&[::std::any::TypeId]) -> __hecs__T) -> __hecs__T {
-                <Self as ::hecs::Bundle>::with_static_ids(f)
+                <Self as ::hexz::Bundle>::with_static_ids(f)
             }
 
-            fn type_info(&self) -> ::std::vec::Vec<::hecs::TypeInfo> {
-                <Self as ::hecs::Bundle>::with_static_type_info(|info| info.to_vec())
+            fn type_info(&self) -> ::std::vec::Vec<::hexz::TypeInfo> {
+                <Self as ::hexz::Bundle>::with_static_type_info(|info| info.to_vec())
             }
 
             #[allow(clippy::forget_copy)]
-            unsafe fn put(mut self, mut f: impl ::std::ops::FnMut(*mut u8, ::hecs::TypeInfo)) {
+            unsafe fn put(mut self, mut f: impl ::std::ops::FnMut(*mut u8, ::hexz::TypeInfo)) {
                 #(
-                    f((&mut self.#field_members as *mut #tys).cast::<u8>(), ::hecs::TypeInfo::of::<#tys>());
+                    f((&mut self.#field_members as *mut #tys).cast::<u8>(), ::hexz::TypeInfo::of::<#tys>());
                     ::std::mem::forget(self.#field_members);
                 )*
             }
@@ -90,7 +90,7 @@ fn gen_bundle_impl(
     };
     let with_static_ids_body = if generics.params.is_empty() {
         quote! {
-            ::hecs::lazy_static::lazy_static! {
+            ::hexz::lazy_static::lazy_static! {
                 static ref ELEMENTS: [::std::any::TypeId; #num_tys] = {
                     #with_static_ids_inner
                 };
@@ -103,25 +103,25 @@ fn gen_bundle_impl(
         }
     };
     quote! {
-        unsafe impl #impl_generics ::hecs::Bundle for #ident #ty_generics #where_clause {
+        unsafe impl #impl_generics ::hexz::Bundle for #ident #ty_generics #where_clause {
             #[allow(non_camel_case_types)]
             fn with_static_ids<__hecs__T>(f: impl ::std::ops::FnOnce(&[::std::any::TypeId]) -> __hecs__T) -> __hecs__T {
                 #with_static_ids_body
             }
 
             #[allow(non_camel_case_types)]
-            fn with_static_type_info<__hecs__T>(f: impl ::std::ops::FnOnce(&[::hecs::TypeInfo]) -> __hecs__T) -> __hecs__T {
-                let mut info: [::hecs::TypeInfo; #num_tys] = [#(::hecs::TypeInfo::of::<#tys>()),*];
+            fn with_static_type_info<__hecs__T>(f: impl ::std::ops::FnOnce(&[::hexz::TypeInfo]) -> __hecs__T) -> __hecs__T {
+                let mut info: [::hexz::TypeInfo; #num_tys] = [#(::hexz::TypeInfo::of::<#tys>()),*];
                 info.sort_unstable();
                 f(&info)
             }
 
             unsafe fn get(
-                mut f: impl ::std::ops::FnMut(::hecs::TypeInfo) -> ::std::option::Option<::std::ptr::NonNull<u8>>,
-            ) -> ::std::result::Result<Self, ::hecs::MissingComponent> {
+                mut f: impl ::std::ops::FnMut(::hexz::TypeInfo) -> ::std::option::Option<::std::ptr::NonNull<u8>>,
+            ) -> ::std::result::Result<Self, ::hexz::MissingComponent> {
                 #(
-                    let #field_idents = f(::hecs::TypeInfo::of::<#tys>())
-                            .ok_or_else(::hecs::MissingComponent::new::<#tys>)?
+                    let #field_idents = f(::hexz::TypeInfo::of::<#tys>())
+                            .ok_or_else(::hexz::MissingComponent::new::<#tys>)?
                             .cast::<#tys>()
                             .as_ptr();
                 )*
@@ -135,15 +135,15 @@ fn gen_bundle_impl(
 fn gen_unit_struct_bundle_impl(ident: syn::Ident, generics: &syn::Generics) -> TokenStream2 {
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
     quote! {
-        unsafe impl #impl_generics ::hecs::Bundle for #ident #ty_generics #where_clause {
+        unsafe impl #impl_generics ::hexz::Bundle for #ident #ty_generics #where_clause {
             #[allow(non_camel_case_types)]
             fn with_static_ids<__hecs__T>(f: impl ::std::ops::FnOnce(&[::std::any::TypeId]) -> __hecs__T) -> __hecs__T { f(&[]) }
             #[allow(non_camel_case_types)]
-            fn with_static_type_info<__hecs__T>(f: impl ::std::ops::FnOnce(&[::hecs::TypeInfo]) -> __hecs__T) -> __hecs__T { f(&[]) }
+            fn with_static_type_info<__hecs__T>(f: impl ::std::ops::FnOnce(&[::hexz::TypeInfo]) -> __hecs__T) -> __hecs__T { f(&[]) }
 
             unsafe fn get(
-                mut f: impl ::std::ops::FnMut(::hecs::TypeInfo) -> ::std::option::Option<::std::ptr::NonNull<u8>>,
-            ) -> ::std::result::Result<Self, ::hecs::MissingComponent> {
+                mut f: impl ::std::ops::FnMut(::hexz::TypeInfo) -> ::std::option::Option<::std::ptr::NonNull<u8>>,
+            ) -> ::std::result::Result<Self, ::hexz::MissingComponent> {
                 ::std::result::Result::Ok(Self {/* for some reason this works for all unit struct variations */})
             }
         }
@@ -155,7 +155,7 @@ fn make_component_trait_bound() -> syn::TraitBound {
         paren_token: None,
         modifier: syn::TraitBoundModifier::None,
         lifetimes: None,
-        path: syn::parse_quote!(::hecs::Component),
+        path: syn::parse_quote!(::hexz::Component),
     }
 }
 

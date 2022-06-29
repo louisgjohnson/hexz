@@ -6,7 +6,7 @@
 // copied, modified, or distributed except according to those terms.
 
 use crate::alloc::{vec, vec::Vec};
-use core::any::TypeId;
+use core::any::{self, TypeId};
 use core::borrow::Borrow;
 use core::convert::TryFrom;
 use core::hash::{BuildHasherDefault, Hasher};
@@ -47,6 +47,11 @@ use crate::{
 /// following spawns and despawns, that handle may, in rare circumstances, collide with a
 /// newly-allocated `Entity` handle. Very long-lived applications should therefore limit the period
 /// over which they may retain handles of despawned entities.
+///
+///
+///
+type Anything = Box<dyn core::any::Any>;
+
 pub struct World {
     entities: Entities,
     archetypes: ArchetypeSet,
@@ -59,6 +64,8 @@ pub struct World {
     /// after removing the components from that bundle.
     remove_edges: IndexTypeIdMap<u32>,
     id: u64,
+    /// Hasmap for storing resources of any type, key is the TypeId
+    resources: hashbrown::HashMap<std::any::TypeId, Anything>,
 }
 
 impl World {
@@ -80,6 +87,7 @@ impl World {
             insert_edges: HashMap::default(),
             remove_edges: HashMap::default(),
             id,
+            resources: HashMap::default(),
         }
     }
 
@@ -97,7 +105,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn((123, "abc"));
     /// let b = world.spawn((456, true));
@@ -125,7 +133,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn((123, "abc"));
     /// let b = world.spawn((456, true));
@@ -183,7 +191,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let entities = world.spawn_batch((0..1_000).map(|i| (i, "abc"))).collect::<Vec<_>>();
     /// for i in 0..1_000 {
@@ -383,7 +391,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn((123, true, "abc"));
     /// let b = world.spawn((456, false));
@@ -434,7 +442,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn((123, true, "abc"));
     /// // The returned query must outlive the borrow made by `get`
@@ -480,6 +488,26 @@ impl World {
             .ok_or_else(MissingComponent::new::<T>)?)
     }
 
+    pub fn insert_resource<T: 'static>(&mut self, resource: T) {
+        let id = TypeId::of::<T>();
+        self.resources.insert(id, Box::new(resource));
+    }
+
+    pub fn delete_resource<T: 'static>(&mut self) {
+        let id = TypeId::of::<T>();
+        self.resources.remove(&id);
+    }
+
+    pub fn get_resource<T: 'static>(&self) -> Option<&T> {
+        let id = TypeId::of::<T>();
+        self.resources.get(&id)?.downcast_ref::<T>()
+    }
+
+    pub fn get_resource_mut<T: 'static>(&mut self) -> Option<&mut T> {
+        let id = TypeId::of::<T>();
+        self.resources.get_mut(&id)?.downcast_mut::<T>()
+    }
+
     /// Uniquely borrow the `T` component of `entity`
     ///
     /// Panics if the component is already borrowed from another entity with the same components.
@@ -521,7 +549,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn(());
     /// let b = world.spawn(());
@@ -543,7 +571,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let e = world.spawn((123, "abc"));
     /// world.insert(e, (456, true));
@@ -662,7 +690,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let e = world.spawn((123, "abc", true));
     /// assert_eq!(world.remove::<(i32, &str)>(e), Ok((123, "abc")));
@@ -856,7 +884,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// use::hecs::*;
+    /// use::hexz::*;
     /// let mut world = World::new();
     /// let ent = world.spawn((123, "abc"));
     /// let column = world.column::<i32>();
@@ -908,7 +936,7 @@ impl World {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let initial_gen = world.archetypes_generation();
     /// world.spawn((123, "abc"));
@@ -1409,5 +1437,29 @@ mod tests {
     fn bad_insert() {
         let mut world = World::new();
         assert!(world.insert_one(Entity::DANGLING, ()).is_err());
+    }
+
+    #[test]
+    fn get_resources() {
+        let mut world = World::new();
+        world.insert_resource(50);
+        assert_eq!(world.get_resource::<i32>().unwrap(), &50);
+    }
+
+    #[test]
+    fn insert_resources_struct() {
+        let mut world = World::new();
+        let world2 = World::new();
+        world.insert_resource(world2);
+        assert!(world.get_resource::<World>().is_some());
+    }
+
+    #[test]
+    fn delete_resource() {
+        let mut world = World::new();
+        let world2 = World::new();
+        world.insert_resource(world2);
+        world.delete_resource::<World>();
+        assert!(world.get_resource::<World>().is_none());
     }
 }

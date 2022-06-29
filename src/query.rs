@@ -371,7 +371,7 @@ unsafe impl<'a, L: Fetch<'a>, R: Fetch<'a>> Fetch<'a> for FetchOr<L, R> {
 ///
 /// # Example
 /// ```
-/// # use hecs::*;
+/// # use hexz::*;
 /// let mut world = World::new();
 /// let a = world.spawn((123, true, "abc"));
 /// let b = world.spawn((456, false));
@@ -441,7 +441,7 @@ unsafe impl<'a, T: Component, F: Fetch<'a>> Fetch<'a> for FetchWithout<T, F> {
 ///
 /// # Example
 /// ```
-/// # use hecs::*;
+/// # use hexz::*;
 /// let mut world = World::new();
 /// let a = world.spawn((123, true, "abc"));
 /// let b = world.spawn((456, false));
@@ -513,7 +513,7 @@ unsafe impl<'a, T: Component, F: Fetch<'a>> Fetch<'a> for FetchWith<T, F> {
 ///
 /// # Example
 /// ```
-/// # use hecs::*;
+/// # use hexz::*;
 /// let mut world = World::new();
 /// let a = world.spawn((123, true, "abc"));
 /// let b = world.spawn((456, false));
@@ -631,7 +631,7 @@ impl<'w, Q: Query> QueryBorrow<'w, Q> {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn((123, true, "abc"));
     /// let b = world.spawn((456, false));
@@ -654,7 +654,7 @@ impl<'w, Q: Query> QueryBorrow<'w, Q> {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn((123, true, "abc"));
     /// let b = world.spawn((456, false));
@@ -1339,7 +1339,7 @@ impl<'q, Q: Query> View<'q, Q> {
     /// # Examples
     ///
     /// ```
-    /// # use hecs::World;
+    /// # use hexz::World;
     /// let mut world = World::new();
     ///
     /// let a = world.spawn((1, 1.0));

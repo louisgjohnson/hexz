@@ -1,4 +1,4 @@
-use hecs::Bundle;
+use hexz::Bundle;
 
 #[derive(Bundle)]
 struct Foo<T> {

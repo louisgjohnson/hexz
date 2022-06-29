@@ -1,4 +1,4 @@
-use hecs::Query;
+use hexz::Query;
 
 #[derive(Query)]
 struct Foo<'a> {

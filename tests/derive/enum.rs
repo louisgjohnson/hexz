@@ -1,4 +1,4 @@
-use hecs::{Bundle, Query};
+use hexz::{Bundle, Query};
 
 #[derive(Query)]
 enum Foo {}

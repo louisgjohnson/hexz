@@ -1,4 +1,10 @@
-# hecs
+# hexz
+
+
+## 🚧 My own personal fork of hecs 🚧
+
+differences so far: 
+- Single typed resources
 
 [![Documentation](https://docs.rs/hecs/badge.svg)](https://docs.rs/hecs/)
 [![Crates.io](https://img.shields.io/crates/v/hecs.svg)](https://crates.io/crates/hecs)

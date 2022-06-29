@@ -1,12 +1,12 @@
 //! One way to the contents of an entity, as you might do for debugging. A similar pattern could
 //! also be useful for serialization, or other row-oriented generic operations.
 
-fn format_entity(entity: hecs::EntityRef<'_>) -> String {
-    fn fmt<T: hecs::Component + std::fmt::Display>(entity: hecs::EntityRef<'_>) -> Option<String> {
+fn format_entity(entity: hexz::EntityRef<'_>) -> String {
+    fn fmt<T: hexz::Component + std::fmt::Display>(entity: hexz::EntityRef<'_>) -> Option<String> {
         Some(entity.get::<T>()?.to_string())
     }
 
-    const FUNCTIONS: &[&dyn Fn(hecs::EntityRef<'_>) -> Option<String>] =
+    const FUNCTIONS: &[&dyn Fn(hexz::EntityRef<'_>) -> Option<String>] =
         &[&fmt::<i32>, &fmt::<bool>, &fmt::<f64>];
 
     let mut out = String::new();
@@ -29,7 +29,7 @@ fn format_entity(entity: hecs::EntityRef<'_>) -> String {
 }
 
 fn main() {
-    let mut world = hecs::World::new();
+    let mut world = hexz::World::new();
     let e = world.spawn((42, true));
     println!("{}", format_entity(world.entity(e).unwrap()));
 }

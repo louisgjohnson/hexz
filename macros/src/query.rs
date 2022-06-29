@@ -86,13 +86,13 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
             #[derive(Clone, Copy)]
             #vis struct #state_ident<'a> {
                 #(
-                    #fields: <#fetches as ::hecs::Fetch<'a>>::State,
+                    #fields: <#fetches as ::hexz::Fetch<'a>>::State,
                 )*
             }
         },
         syn::Fields::Unnamed(_) => quote! {
             #[derive(Clone, Copy)]
-            #vis struct #state_ident<'a>(#(<#fetches as ::hecs::Fetch<'a>>::State),*);
+            #vis struct #state_ident<'a>(#(<#fetches as ::hexz::Fetch<'a>>::State),*);
         },
         syn::Fields::Unit => quote! {
             #[derive(Clone, Copy)]
@@ -101,7 +101,7 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
     };
 
     Ok(quote! {
-        impl<'a> ::hecs::Query for #ident<'a> {
+        impl<'a> ::hexz::Query for #ident<'a> {
             type Fetch = #fetch_ident;
         }
 
@@ -111,7 +111,7 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
         #[doc(hidden)]
         #state
 
-        unsafe impl<'a> ::hecs::Fetch<'a> for #fetch_ident {
+        unsafe impl<'a> ::hexz::Fetch<'a> for #fetch_ident {
             type Item = #ident<'a>;
 
             type State = #state_ident<'a>;
@@ -125,8 +125,8 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
             }
 
             #[allow(unused_variables, unused_mut)]
-            fn access(archetype: &::hecs::Archetype) -> ::std::option::Option<::hecs::Access> {
-                let mut access = ::hecs::Access::Iterate;
+            fn access(archetype: &::hexz::Archetype) -> ::std::option::Option<::hexz::Access> {
+                let mut access = ::hexz::Access::Iterate;
                 #(
                     access = ::core::cmp::max(access, #fetches::access(archetype)?);
                 )*
@@ -134,12 +134,12 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
             }
 
             #[allow(unused_variables)]
-            fn borrow(archetype: &::hecs::Archetype, state: Self::State) {
+            fn borrow(archetype: &::hexz::Archetype, state: Self::State) {
                 #(#fetches::borrow(archetype, state.#fields);)*
             }
 
             #[allow(unused_variables)]
-            fn prepare(archetype: &::hecs::Archetype) -> ::std::option::Option<Self::State> {
+            fn prepare(archetype: &::hexz::Archetype) -> ::std::option::Option<Self::State> {
                 ::std::option::Option::Some(#state_ident {
                     #(
                         #fields: #fetches::prepare(archetype)?,
@@ -148,7 +148,7 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
             }
 
             #[allow(unused_variables)]
-            fn execute(archetype: &'a ::hecs::Archetype, state: Self::State) -> Self {
+            fn execute(archetype: &'a ::hexz::Archetype, state: Self::State) -> Self {
                 Self {
                     #(
                         #fields: #fetches::execute(archetype, state.#fields),
@@ -157,14 +157,14 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
             }
 
             #[allow(unused_variables)]
-            fn release(archetype: &::hecs::Archetype, state: Self::State) {
+            fn release(archetype: &::hexz::Archetype, state: Self::State) {
                 #(#fetches::release(archetype, state.#fields);)*
             }
 
             #[allow(unused_variables, unused_mut)]
             fn for_each_borrow(mut f: impl ::core::ops::FnMut(::core::any::TypeId, bool)) {
                 #(
-                    <#fetches as ::hecs::Fetch<'static>>::for_each_borrow(&mut f);
+                    <#fetches as ::hexz::Fetch<'static>>::for_each_borrow(&mut f);
                 )*
             }
 
@@ -172,7 +172,7 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream2> {
             unsafe fn get(&self, n: usize) -> Self::Item {
                 #ident {
                     #(
-                        #fields: <#fetches as ::hecs::Fetch<'a>>::get(&self.#fields, n),
+                        #fields: <#fetches as ::hexz::Fetch<'a>>::get(&self.#fields, n),
                     )*
                 }
             }
@@ -195,6 +195,6 @@ fn query_fetch_ty(lifetime: &Lifetime, ty: &Type) -> TokenStream2 {
     let mut ty = ty.clone();
     syn::visit_mut::visit_type_mut(&mut Visitor { replace: lifetime }, &mut ty);
     quote! {
-        <#ty as ::hecs::Query>::Fetch
+        <#ty as ::hexz::Query>::Fetch
     }
 }

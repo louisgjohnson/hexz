@@ -55,7 +55,7 @@ impl<'a> EntityRef<'a> {
     ///
     /// # Example
     /// ```
-    /// # use hecs::*;
+    /// # use hexz::*;
     /// let mut world = World::new();
     /// let a = world.spawn((123, true, "abc"));
     /// // The returned query must outlive the borrow made by `get`

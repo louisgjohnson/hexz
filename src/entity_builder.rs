@@ -21,7 +21,7 @@ use crate::{align, Component, DynamicBundle};
 /// Prefer reusing the same builder over creating new ones repeatedly.
 ///
 /// ```
-/// # use hecs::*;
+/// # use hexz::*;
 /// let mut world = World::new();
 /// let mut builder = EntityBuilder::new();
 /// builder.add(123).add("abc");
@@ -135,7 +135,7 @@ impl Drop for BuiltEntity<'_> {
 /// Variant of [`EntityBuilder`] that clones components on use
 ///
 /// ```
-/// # use hecs::*;
+/// # use hexz::*;
 /// let mut world = World::new();
 /// let mut builder = EntityBuilderClone::new();
 /// builder.add(123).add("abc");

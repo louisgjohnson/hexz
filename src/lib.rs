@@ -18,7 +18,7 @@
 //! - exclusion of externally-implementable functionality
 //!
 //! ```
-//! # use hecs::*;
+//! # use hexz::*;
 //! let mut world = World::new();
 //! // Nearly any type can be used as a component with zero boilerplate
 //! let a = world.spawn((123, true, "abc"));

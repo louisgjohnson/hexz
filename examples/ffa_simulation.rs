@@ -1,4 +1,4 @@
-use hecs::*;
+use hexz::*;
 use rand::{thread_rng, Rng};
 use std::io;
 

@@ -1,11 +1,11 @@
 [package]
-name = "hecs"
-version = "0.7.6"
-description = "A fast, minimal, and ergonomic entity-component-system library"
-authors = ["Benjamin Saunders <ben.e.saunders@gmail.com>"]
+name = "hexz"
+version = "0.0.1"
+description = "A fork of hecs, for my personal use"
+authors = ["Benjamin Saunders <ben.e.saunders@gmail.com>", "Louis Johnson <louisgjohnson@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/Ralith/hecs"
+repository = "https://github.com/louisgjohnson/hexz"
 readme = "README.md"
 keywords = ["ecs", "entity"]
 categories = ["data-structures", "game-engines", "no-std"]

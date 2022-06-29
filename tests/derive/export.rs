@@ -1,5 +1,5 @@
 mod inner {
-    use hecs::{Bundle, Query};
+    use hexz::{Bundle, Query};
 
     #[derive(Bundle)]
     pub struct Foo;

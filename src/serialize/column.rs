@@ -43,7 +43,7 @@ use crate::{
 /// # #[derive(Serialize)]
 /// # struct Velocity([f32; 3]);
 /// use std::any::TypeId;
-/// use hecs::{*, serialize::column::*};
+/// use hexz::{*, serialize::column::*};
 ///
 /// #[derive(Serialize, Deserialize)]
 /// enum ComponentId { Position, Velocity }
@@ -299,7 +299,7 @@ where
 /// # struct Position([f32; 3]);
 /// # #[derive(Deserialize)]
 /// # struct Velocity([f32; 3]);
-/// use hecs::{*, serialize::column::*};
+/// use hexz::{*, serialize::column::*};
 ///
 /// #[derive(Serialize, Deserialize)]
 /// enum ComponentId { Position, Velocity }

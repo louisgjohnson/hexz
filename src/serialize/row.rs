@@ -32,7 +32,7 @@ use crate::{Component, EntityBuilder, EntityRef, World};
 /// # struct Position([f32; 3]);
 /// # #[derive(Serialize)]
 /// # struct Velocity([f32; 3]);
-/// use hecs::{*, serialize::row::*};
+/// use hexz::{*, serialize::row::*};
 ///
 /// #[derive(Serialize, Deserialize)]
 /// enum ComponentId { Position, Velocity }
@@ -138,7 +138,7 @@ where
 /// # struct Position([f32; 3]);
 /// # #[derive(Deserialize)]
 /// # struct Velocity([f32; 3]);
-/// use hecs::{*, serialize::row::*};
+/// use hexz::{*, serialize::row::*};
 ///
 /// #[derive(Serialize, Deserialize)]
 /// enum ComponentId { Position, Velocity }

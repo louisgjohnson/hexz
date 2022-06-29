@@ -1,19 +1,19 @@
 #![no_implicit_prelude]
 
-#[derive(::hecs::Bundle)]
+#[derive(::hexz::Bundle)]
 struct Foo {
     foo: (),
 }
 
-#[derive(::hecs::Bundle)]
+#[derive(::hexz::Bundle)]
 struct Bar<T> {
     foo: T,
 }
 
-#[derive(::hecs::Bundle)]
+#[derive(::hexz::Bundle)]
 struct Baz;
 
-#[derive(::hecs::Query)]
+#[derive(::hexz::Query)]
 struct Quux<'a> {
     foo: &'a (),
 }
